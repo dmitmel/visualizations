@@ -1,13 +1,13 @@
 import './style.css';
 
-window.addEventListener('load', () => {
-  const BACKGROUND_COLOR = '#222';
-  const POINT_RADIUS = 4;
-  const POINT_COLOR = '#eee';
-  const LINE_WIDTH = 2;
-  const LINE_COLOR = '#888';
+const BACKGROUND_COLOR = '#222';
+const POINT_RADIUS = 4;
+const POINT_COLOR = '#eee';
+const LINE_WIDTH = 2;
+const LINE_COLOR = '#888';
 
-  let canvas = document.getElementById('canvas');
+window.addEventListener('load', () => {
+  let canvas = document.getElementById('canvas') as HTMLCanvasElement;
   let ctx = canvas.getContext('2d');
 
   function adjustCanvasSize() {
@@ -20,12 +20,15 @@ window.addEventListener('load', () => {
   let { PI } = Math;
   let TWO_PI = PI * 2;
 
-  function lerp(a, b, t) {
+  function lerp(a: number, b: number, t: number) {
     return a + (b - a) * t;
   }
 
   class Vector {
-    constructor(x, y) {
+    x: number;
+    y: number;
+
+    constructor(x: number, y: number) {
       this.x = x;
       this.y = y;
     }
@@ -41,33 +44,36 @@ window.addEventListener('load', () => {
       ctx.fill();
     }
 
-    plus(other) {
+    plus(other: Vector) {
       return vec(this.x + other.x, this.y + other.y);
     }
 
-    minus(other) {
+    minus(other: Vector) {
       return vec(this.x - other.x, this.y - other.y);
     }
 
-    times(other) {
+    times(other: Vector) {
       return vec(this.x * other.x, this.y * other.y);
     }
 
-    divide(other) {
+    divide(other: Vector) {
       return vec(this.x + other.x, this.y + other.y);
     }
 
-    lerp(other, t) {
+    lerp(other: Vector, t: number) {
       return vec(lerp(this.x, other.x, t), lerp(this.y, other.y, t));
     }
   }
 
-  function vec(x, y) {
+  function vec(x: number, y: number) {
     return new Vector(x, y);
   }
 
   class Line {
-    constructor(a, b) {
+    a: Vector;
+    b: Vector;
+
+    constructor(a: Vector, b: Vector) {
       this.a = a;
       this.b = b;
     }
@@ -81,7 +87,7 @@ window.addEventListener('load', () => {
       ctx.stroke();
     }
 
-    intersection(other) {
+    intersection(other: Line) {
       let { x: x1, y: y1 } = this.a;
       let { x: x2, y: y2 } = this.b;
       let { x: x3, y: y3 } = other.a;
@@ -103,7 +109,10 @@ window.addEventListener('load', () => {
   }
 
   class Polygon {
-    constructor(vertices) {
+    vertices: Vector[];
+    edges: Line[];
+
+    constructor(vertices: Vector[]) {
       this.vertices = vertices;
       this.edges = [];
       for (let i = 0; i < vertices.length; i++) {
@@ -113,7 +122,7 @@ window.addEventListener('load', () => {
       }
     }
 
-    static regular(center, radius, vertexCount) {
+    static regular(center: Vector, radius: number, vertexCount: number) {
       let vertices = [];
       for (let i = 0; i < vertexCount; i++) {
         vertices.push(
@@ -161,9 +170,9 @@ window.addEventListener('load', () => {
   let currentPoint = outerVertices[0].lerp(outerVertices[1], 1 / 2);
   let currentEdgeIndex = 0;
 
-  let drawnLines = [];
+  let drawnLines: Line[] = [];
 
-  window.nextPoint = function nextPoint() {
+  (window as any).nextPoint = function nextPoint() {
     let currentInnerEdge = innerShape.edges[currentEdgeIndex];
     let currentOuterEdge =
       outerShape.edges[
@@ -187,7 +196,7 @@ window.addEventListener('load', () => {
     if (currentEdgeIndex >= innerShape.edges.length) currentEdgeIndex = 0;
   };
 
-  function render(time) {
+  function render(time: number) {
     ctx.fillStyle = BACKGROUND_COLOR;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 

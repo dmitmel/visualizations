@@ -29,7 +29,8 @@ function resolve(...paths) {
 }
 
 // regular expressions for common file types
-const JS_FILES = /\.js$/;
+const JAVASCRIPT_FILES = /\.js$/;
+const TYPESCRIPT_FILES = /\.ts$/;
 const STYLESHEET_FILES = /\.(s[ca]|c)ss$/;
 
 module.exports = {
@@ -37,6 +38,10 @@ module.exports = {
   entry: resolve('src', 'index'),
 
   devtool: 'source-map',
+
+  resolve: {
+    extensions: ['.ts', '.js', '.json'],
+  },
 
   output: {
     filename: assetURL('[name]', '[chunkhash:8]', 'js'),
@@ -60,27 +65,39 @@ module.exports = {
 
   module: {
     rules: [
+      // {
+      //   test: JAVASCRIPT_FILES,
+      //   include: resolve('src'),
+      //   exclude: /node_modules/,
+      //   enforce: 'pre',
+      //   use: [
+      //     {
+      //       loader: 'eslint-loader',
+      //       options: {},
+      //     },
+      //   ],
+      // },
+
+      // {
+      //   test: JAVASCRIPT_FILES,
+      //   include: resolve('src'),
+      //   exclude: /node_modules/,
+      //   use: [
+      //     {
+      //       loader: 'babel-loader',
+      //       options: { cacheDirectory: true },
+      //     },
+      //   ],
+      // },
+
       {
-        test: JS_FILES,
+        test: TYPESCRIPT_FILES,
         include: resolve('src'),
         exclude: /node_modules/,
         enforce: 'pre',
         use: [
           {
-            loader: 'eslint-loader',
-            options: {},
-          },
-        ],
-      },
-
-      {
-        test: JS_FILES,
-        include: resolve('src'),
-        exclude: /node_modules/,
-        use: [
-          {
-            loader: 'babel-loader',
-            options: { cacheDirectory: true },
+            loader: 'ts-loader',
           },
         ],
       },
@@ -112,7 +129,12 @@ module.exports = {
       },
 
       {
-        exclude: [JS_FILES, STYLESHEET_FILES, /\.(json|html)$/],
+        exclude: [
+          JAVASCRIPT_FILES,
+          TYPESCRIPT_FILES,
+          STYLESHEET_FILES,
+          /\.(json|html)$/,
+        ],
         use: [
           {
             loader: 'file-loader',

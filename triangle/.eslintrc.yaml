@@ -5,7 +5,7 @@ parser: babel-eslint
 parserOptions:
   sourceType: module
 overrides:
-  - files: ./src/**/*
+  - files: ./src/**/*.js
     rules:
       node/no-unsupported-features/es-syntax: off
   - files: ./webpack.config.js
