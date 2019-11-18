@@ -1,0 +1,13 @@
+extends: eslint-config-dmitmel/presets/node
+env:
+  browser: true
+parser: babel-eslint
+parserOptions:
+  sourceType: module
+overrides:
+  - files: ./src/**/*
+    rules:
+      node/no-unsupported-features/es-syntax: off
+  - files: ./webpack.config.js
+    rules:
+      node/no-unpublished-require: off

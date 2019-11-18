@@ -1,3 +1,5 @@
+import './style.css';
+
 window.addEventListener('load', () => {
   const BACKGROUND_COLOR = '#222';
   const POINT_RADIUS = 4;
