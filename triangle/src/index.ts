@@ -76,14 +76,14 @@ window.addEventListener('load', () => {
 
   let innerVertices = [];
   for (let i = 0; i < outerVertices.length; i++) {
-    let vertex = outerVertices[i];
+    let vertex = outerVertices[i].clone();
     let nextVertex = outerVertices[i + 1 < outerVertices.length ? i + 1 : 0];
     const k = 1 / 4;
     innerVertices.push(vertex.lerp(nextVertex, k));
   }
   let innerShape = new Polygon(innerVertices);
 
-  let currentPoint = outerVertices[0].lerp(outerVertices[1], 1 / 2);
+  let currentPoint = outerVertices[0].clone().lerp(outerVertices[1], 1 / 2);
   let currentEdgeIndex = 0;
 
   let drawnLines: Line[] = [];
@@ -98,10 +98,10 @@ window.addEventListener('load', () => {
       ];
     let ray = new Line(
       currentPoint,
-      vec(
-        currentPoint.x + (currentInnerEdge.b.x - currentInnerEdge.a.x),
-        currentPoint.y + (currentInnerEdge.b.y - currentInnerEdge.a.y),
-      ),
+      currentPoint
+        .clone()
+        .add(currentInnerEdge.b)
+        .subtract(currentInnerEdge.a),
     );
 
     let intersection = currentOuterEdge.intersection(ray);
@@ -149,10 +149,10 @@ window.addEventListener('load', () => {
       ];
     let ray = new Line(
       currentPoint,
-      vec(
-        currentPoint.x + (currentInnerEdge.b.x - currentInnerEdge.a.x),
-        currentPoint.y + (currentInnerEdge.b.y - currentInnerEdge.a.y),
-      ),
+      currentPoint
+        .clone()
+        .add(currentInnerEdge.b)
+        .subtract(currentInnerEdge.a),
     );
 
     ctx.restore();

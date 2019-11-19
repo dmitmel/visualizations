@@ -3,8 +3,8 @@ export function lerp(a: number, b: number, t: number) {
 }
 
 export class Vector {
-  readonly x: number;
-  readonly y: number;
+  x: number;
+  y: number;
 
   constructor(x: number, y: number) {
     this.x = x;
@@ -12,27 +12,41 @@ export class Vector {
   }
 
   clone() {
-    return vec(this.x, this.y);
+    return new Vector(this.x, this.y);
   }
 
-  plus(other: Vector) {
-    return vec(this.x + other.x, this.y + other.y);
+  set(x: number, y: number) {
+    this.x = x;
+    this.y = y;
+    return this;
   }
 
-  minus(other: Vector) {
-    return vec(this.x - other.x, this.y - other.y);
+  add(other: Vector) {
+    this.x += other.x;
+    this.y += other.y;
+    return this;
   }
 
-  times(other: Vector) {
-    return vec(this.x * other.x, this.y * other.y);
+  subtract(other: Vector) {
+    this.x -= other.x;
+    this.y -= other.y;
+    return this;
+  }
+
+  multiply(other: Vector) {
+    this.x *= other.x;
+    this.y *= other.y;
+    return this;
   }
 
   divide(other: Vector) {
-    return vec(this.x + other.x, this.y + other.y);
+    this.x /= other.x;
+    this.y /= other.y;
+    return this;
   }
 
   lerp(other: Vector, t: number) {
-    return vec(lerp(this.x, other.x, t), lerp(this.y, other.y, t));
+    return this.set(lerp(this.x, other.x, t), lerp(this.y, other.y, t));
   }
 }
 
