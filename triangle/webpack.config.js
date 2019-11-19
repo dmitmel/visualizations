@@ -53,12 +53,7 @@ module.exports = {
 
   devServer: {
     hot: true,
-    hotOnly: true,
     inline: true,
-    // Disable verbose logging in browser's console, only print errors
-    clientLogLevel: 'error',
-    // Do not print chunks list on every compilation, only print errors
-    stats: 'errors-only',
     publicPath: '/',
     overlay: true,
   },
