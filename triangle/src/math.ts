@@ -33,15 +33,15 @@ export class Vector {
     return this;
   }
 
-  multiply(other: Vector) {
-    this.x *= other.x;
-    this.y *= other.y;
+  multiply(scalar: number) {
+    this.x *= scalar;
+    this.y *= scalar;
     return this;
   }
 
-  divide(other: Vector) {
-    this.x /= other.x;
-    this.y /= other.y;
+  divide(scalar: number) {
+    this.x /= scalar;
+    this.y /= scalar;
     return this;
   }
 

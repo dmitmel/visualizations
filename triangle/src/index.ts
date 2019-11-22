@@ -1,5 +1,6 @@
 import { Line, Vector, vec } from './math';
 import './style.css';
+import { PanZoom } from './PanZoom';
 
 const BACKGROUND_COLOR = '#222';
 const POINT_RADIUS = 4;
@@ -17,6 +18,35 @@ window.addEventListener('load', () => {
   }
   adjustCanvasSize();
   window.addEventListener('resize', adjustCanvasSize);
+
+  let panZoom = new PanZoom(canvas);
+
+  function getMouseCoordinates(event: MouseEvent) {
+    return vec(event.clientX, event.clientY);
+  }
+
+  canvas.addEventListener('mousedown', event => {
+    panZoom.onMouseDown(getMouseCoordinates(event));
+  });
+
+  canvas.addEventListener('mousemove', event => {
+    panZoom.onMouseMove(getMouseCoordinates(event));
+  });
+
+  canvas.addEventListener('mouseup', event => {
+    panZoom.onMouseUp(getMouseCoordinates(event));
+  });
+
+  canvas.addEventListener('mouseleave', event => {
+    panZoom.onMouseLeave(getMouseCoordinates(event));
+  });
+
+  canvas.addEventListener('wheel', event => {
+    panZoom.onWheel(
+      getMouseCoordinates(event),
+      vec(event.deltaX, event.deltaY),
+    );
+  });
 
   let { PI } = Math;
   let TWO_PI = PI * 2;
@@ -124,6 +154,8 @@ window.addEventListener('load', () => {
 
     ctx.save();
     ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.translate(panZoom.translation.x, panZoom.translation.y);
+    ctx.scale(panZoom.scale, panZoom.scale);
 
     outerShape.render();
     innerShape.render();
