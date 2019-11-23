@@ -15,29 +15,25 @@ export class App {
 
     this.renderingContext = this.canvas.getContext('2d');
 
-    function getMouseCoordinates(event: MouseEvent) {
-      return vec(event.clientX, event.clientY);
-    }
-
     canvas.addEventListener('mousedown', event => {
-      this.panZoom.onMouseDown(getMouseCoordinates(event));
+      this.panZoom.onMouseDown(this.getMouseCoordinates(event));
     });
 
     canvas.addEventListener('mousemove', event => {
-      this.panZoom.onMouseMove(getMouseCoordinates(event));
+      this.panZoom.onMouseMove(this.getMouseCoordinates(event));
     });
 
     canvas.addEventListener('mouseup', event => {
-      this.panZoom.onMouseUp(getMouseCoordinates(event));
+      this.panZoom.onMouseUp(this.getMouseCoordinates(event));
     });
 
     canvas.addEventListener('mouseleave', event => {
-      this.panZoom.onMouseLeave(getMouseCoordinates(event));
+      this.panZoom.onMouseLeave(this.getMouseCoordinates(event));
     });
 
     canvas.addEventListener('wheel', event => {
       this.panZoom.onWheel(
-        getMouseCoordinates(event),
+        this.getMouseCoordinates(event),
         vec(event.deltaX, event.deltaY),
       );
     });
@@ -50,5 +46,13 @@ export class App {
     this.canvas.width = document.documentElement.clientWidth;
     this.canvas.height = document.documentElement.clientHeight;
     this.canvasSize = vec(this.canvas.width, this.canvas.height);
+  }
+
+  getMouseCoordinates(event: MouseEvent) {
+    return vec(
+      event.clientX,
+      // transform mouse Y into graphics coordinates
+      this.canvasSize.y - event.clientY,
+    );
   }
 }

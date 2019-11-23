@@ -120,6 +120,9 @@ window.addEventListener('load', () => {
 
     ctx.save();
     ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.scale(1, -1);
+
+    ctx.save();
     ctx.translate(app.panZoom.translation.x, app.panZoom.translation.y);
     ctx.scale(app.panZoom.scale, app.panZoom.scale);
 
@@ -156,6 +159,8 @@ window.addEventListener('load', () => {
     ctx.restore();
 
     app.coordinatePlane.render();
+
+    ctx.restore();
 
     requestAnimationFrame(render);
   }

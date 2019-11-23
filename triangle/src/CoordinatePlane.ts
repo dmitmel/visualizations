@@ -39,14 +39,14 @@ export class CoordinatePlane {
 
     // y axis
     arrow(
-      vec(translation.x + canvasSize.x / 2, canvasSize.y),
-      vec(translation.x + canvasSize.x / 2, 0),
+      vec(-canvasSize.x / 2, translation.y),
+      vec(canvasSize.x / 2, translation.y),
     );
 
     // x axis
     arrow(
-      vec(0, translation.y + canvasSize.y / 2),
-      vec(canvasSize.x, translation.y + canvasSize.y / 2),
+      vec(translation.x, -canvasSize.y / 2),
+      vec(translation.x, canvasSize.y / 2),
     );
 
     ctx.lineWidth = RULER_LINE_WIDTH;

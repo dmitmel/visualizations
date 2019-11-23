@@ -1,7 +1,7 @@
 import { Vector, vec } from './math';
 import { App } from './App';
 
-const SCROLL_ZOOM_SENSITIVITY = 0.01;
+const SCROLL_ZOOM_SENSITIVITY = 0.04;
 
 export class PanZoom {
   translation: Vector = vec(0, 0);
