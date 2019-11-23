@@ -108,15 +108,30 @@ window.addEventListener('load', () => {
     if (currentEdgeIndex >= innerShape.edges.length) currentEdgeIndex = 0;
   };
 
+  let prevTime: number = null;
+  let prevFpsCalculationTime: number = null;
+  let fps: number = null;
+  const FPS_RENDER_INTERVAL = 100;
+
   function render(time: number) {
     ctx.fillStyle = BACKGROUND_COLOR;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // ctx.font = '48px monospace';
-    // ctx.textAlign = 'end';
-    // ctx.textBaseline = 'top';
-    // ctx.fillStyle = '#fff';
-    // ctx.fillText((time / 1000).toFixed(3), canvas.width - 10, 10);
+    if (
+      prevTime != null &&
+      time - prevFpsCalculationTime > FPS_RENDER_INTERVAL
+    ) {
+      fps = Math.floor(1000 / (time - prevTime));
+      prevFpsCalculationTime = time;
+    }
+
+    if (fps != null) {
+      ctx.font = '24px monospace';
+      ctx.textAlign = 'end';
+      ctx.textBaseline = 'top';
+      ctx.fillStyle = '#000000';
+      ctx.fillText(`${fps} FPS`, canvas.width - 10, 10);
+    }
 
     ctx.save();
     ctx.translate(canvas.width / 2, canvas.height / 2);
@@ -162,6 +177,7 @@ window.addEventListener('load', () => {
 
     ctx.restore();
 
+    prevTime = time;
     requestAnimationFrame(render);
   }
   requestAnimationFrame(render);
