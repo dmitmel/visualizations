@@ -1,12 +1,15 @@
 import { App, GameObject } from './App';
 import { Vector, vec, deg2rad, vec1 } from './math';
 
+export const PIXELS_PER_UNIT = 100;
+
 const ARROW_HEAD_LENGTH = 10;
 const ARROW_HEAD_ANGLE = 30;
 
-const RULER_COLOR = '#000';
-const RULER_LINE_WIDTH = 2;
-const RULER_AXIS_MARGIN = vec1(20);
+const AXIS_COLOR = '#000';
+const AXIS_LINE_WIDTH = 2;
+const AXIS_MARGIN = vec1(AXIS_LINE_WIDTH / 2);
+const AXIS_MARK_SIZE = 16;
 
 const MOUSE_GUIDES_COLOR = '#aaa';
 const MOUSE_GUIDES_LINE_WIDTH = 1;
@@ -22,14 +25,14 @@ export class CoordinatePlane implements GameObject {
       panZoom,
     } = this.app;
     let halfCanvasSize = canvasSize.clone().divide(2);
-    let { translation } = panZoom;
+    let { translation, scale } = panZoom;
 
-    let axisPositions = panZoom.translation.clone().clamp(
+    let axisPos = translation.clone().clamp(
       halfCanvasSize
         .clone()
         .negate()
-        .add(RULER_AXIS_MARGIN),
-      halfCanvasSize.clone().subtract(RULER_AXIS_MARGIN),
+        .add(AXIS_MARGIN),
+      halfCanvasSize.clone().subtract(AXIS_MARGIN),
     );
 
     ctx.beginPath();
@@ -69,21 +72,34 @@ export class CoordinatePlane implements GameObject {
       ctx.lineTo(p2.x, p2.y);
     }
 
-    // y axis
-    arrow(
-      vec(-halfCanvasSize.x, axisPositions.y),
-      vec(halfCanvasSize.x, axisPositions.y),
-    );
+    function drawAxis(axis: 'x' | 'y') {
+      let startPoint = halfCanvasSize.clone().negate();
+      startPoint[axis] = axisPos[axis];
+      let endPoint = halfCanvasSize.clone();
+      endPoint[axis] = axisPos[axis];
+      arrow(startPoint, endPoint);
 
-    // x axis
-    arrow(
-      vec(axisPositions.x, -halfCanvasSize.y),
-      vec(axisPositions.x, halfCanvasSize.y),
-    );
+      let screenPxPerUnit = scale * PIXELS_PER_UNIT;
+      let offset = (translation[axis] / screenPxPerUnit) % 1;
+      let count = Math.floor(canvasSize[axis] / screenPxPerUnit) + 2;
+      for (let i = 0; i < count; i++) {
+        let markPos = (offset + i - Math.floor(count / 2)) * screenPxPerUnit;
+        let halfMarkSizeVec = vec1(AXIS_MARK_SIZE / 2);
+        let markStartPoint = axisPos.clone().subtract(halfMarkSizeVec);
+        markStartPoint[axis] = markPos;
+        let markEndPoint = axisPos.clone().add(halfMarkSizeVec);
+        markEndPoint[axis] = markPos;
+        ctx.moveTo(markStartPoint.x, markStartPoint.y);
+        ctx.lineTo(markEndPoint.x, markEndPoint.y);
+      }
+    }
+
+    drawAxis('x');
+    drawAxis('y');
 
     ctx.save();
-    ctx.lineWidth = RULER_LINE_WIDTH;
-    ctx.strokeStyle = RULER_COLOR;
+    ctx.lineWidth = AXIS_LINE_WIDTH;
+    ctx.strokeStyle = AXIS_COLOR;
     ctx.stroke();
     ctx.restore();
   }
