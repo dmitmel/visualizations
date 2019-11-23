@@ -49,9 +49,10 @@ export class App {
   }
 
   adjustCanvasSize() {
-    this.canvas.width = document.documentElement.clientWidth;
-    this.canvas.height = document.documentElement.clientHeight;
-    this.canvasSize = vec(this.canvas.width, this.canvas.height);
+    let { clientWidth: width, clientHeight: height } = document.documentElement;
+    this.canvas.width = width;
+    this.canvas.height = height;
+    this.canvasSize = vec(width, height);
   }
 
   private forEachObject(callback: (value: GameObject) => void) {
