@@ -2,6 +2,14 @@ export function lerp(a: number, b: number, t: number) {
   return a + (b - a) * t;
 }
 
+export function deg2rad(degrees: number) {
+  return (degrees / 180) * Math.PI;
+}
+
+export function rad2deg(radians: number) {
+  return (radians / Math.PI) * 180;
+}
+
 export class Vector {
   x: number;
   y: number;
@@ -19,6 +27,18 @@ export class Vector {
     this.x = x;
     this.y = y;
     return this;
+  }
+
+  get length() {
+    return Math.sqrt(this.x * this.x + this.y * this.y);
+  }
+
+  set length(val) {
+    this.setLength(val);
+  }
+
+  get sqrLength() {
+    return this.x * this.x + this.y * this.y;
   }
 
   add(other: Vector) {
@@ -45,8 +65,24 @@ export class Vector {
     return this;
   }
 
+  normalize() {
+    return this.divide(this.length);
+  }
+
+  setLength(newLength: number) {
+    return this.normalize().multiply(newLength);
+  }
+
   lerp(other: Vector, t: number) {
     return this.set(lerp(this.x, other.x, t), lerp(this.y, other.y, t));
+  }
+
+  rotate(angle: number) {
+    let c = Math.cos(angle);
+    let s = Math.sin(angle);
+    let x2 = this.x * c - this.y * s;
+    let y2 = this.x * s + this.y * c;
+    return this.set(x2, y2);
   }
 }
 

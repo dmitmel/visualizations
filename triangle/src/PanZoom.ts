@@ -11,11 +11,7 @@ export class PanZoom {
   translationBeforePan: Vector = this.translation;
   mouseBeforePan: Vector = vec(0, 0);
 
-  app: App;
-
-  constructor(app: App) {
-    this.app = app;
-  }
+  constructor(private app: App) {}
 
   onMouseDown(pos: Vector) {
     this.isPanning = true;

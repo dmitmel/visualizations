@@ -14,35 +14,6 @@ window.addEventListener('load', () => {
   let app = new App(canvas);
   let ctx = canvas.getContext('2d');
 
-  let panZoom = new PanZoom(app);
-
-  function getMouseCoordinates(event: MouseEvent) {
-    return vec(event.clientX, event.clientY);
-  }
-
-  canvas.addEventListener('mousedown', event => {
-    panZoom.onMouseDown(getMouseCoordinates(event));
-  });
-
-  canvas.addEventListener('mousemove', event => {
-    panZoom.onMouseMove(getMouseCoordinates(event));
-  });
-
-  canvas.addEventListener('mouseup', event => {
-    panZoom.onMouseUp(getMouseCoordinates(event));
-  });
-
-  canvas.addEventListener('mouseleave', event => {
-    panZoom.onMouseLeave(getMouseCoordinates(event));
-  });
-
-  canvas.addEventListener('wheel', event => {
-    panZoom.onWheel(
-      getMouseCoordinates(event),
-      vec(event.deltaX, event.deltaY),
-    );
-  });
-
   let { PI } = Math;
   let TWO_PI = PI * 2;
 
@@ -149,8 +120,8 @@ window.addEventListener('load', () => {
 
     ctx.save();
     ctx.translate(canvas.width / 2, canvas.height / 2);
-    ctx.translate(panZoom.translation.x, panZoom.translation.y);
-    ctx.scale(panZoom.scale, panZoom.scale);
+    ctx.translate(app.panZoom.translation.x, app.panZoom.translation.y);
+    ctx.scale(app.panZoom.scale, app.panZoom.scale);
 
     outerShape.render();
     innerShape.render();
@@ -183,6 +154,8 @@ window.addEventListener('load', () => {
     );
 
     ctx.restore();
+
+    app.coordinatePlane.render();
 
     requestAnimationFrame(render);
   }
