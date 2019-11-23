@@ -5,6 +5,7 @@ import { CoordinatePlane } from './CoordinatePlane';
 export class App {
   canvasSize: Vector;
   renderingContext: CanvasRenderingContext2D;
+  mousePosition: Vector = vec(0, 0);
 
   panZoom: PanZoom;
   coordinatePlane: CoordinatePlane;
@@ -16,24 +17,29 @@ export class App {
     this.renderingContext = this.canvas.getContext('2d');
 
     canvas.addEventListener('mousedown', event => {
-      this.panZoom.onMouseDown(this.getMouseCoordinates(event));
+      this.sendEvent('onMouseDown', this.translateMousePosition(event));
     });
 
     canvas.addEventListener('mousemove', event => {
-      this.panZoom.onMouseMove(this.getMouseCoordinates(event));
+      this.sendEvent('onMouseMove', this.translateMousePosition(event));
     });
 
     canvas.addEventListener('mouseup', event => {
-      this.panZoom.onMouseUp(this.getMouseCoordinates(event));
+      this.sendEvent('onMouseUp', this.translateMousePosition(event));
+    });
+
+    canvas.addEventListener('mouseenter', event => {
+      this.sendEvent('onMouseEnter', this.translateMousePosition(event));
     });
 
     canvas.addEventListener('mouseleave', event => {
-      this.panZoom.onMouseLeave(this.getMouseCoordinates(event));
+      this.sendEvent('onMouseLeave', this.translateMousePosition(event));
     });
 
     canvas.addEventListener('wheel', event => {
-      this.panZoom.onWheel(
-        this.getMouseCoordinates(event),
+      this.sendEvent(
+        'onWheel',
+        this.translateMousePosition(event),
         vec(event.deltaX, event.deltaY),
       );
     });
@@ -48,11 +54,35 @@ export class App {
     this.canvasSize = vec(this.canvas.width, this.canvas.height);
   }
 
-  getMouseCoordinates(event: MouseEvent) {
-    return vec(
-      event.clientX,
-      // transform mouse Y into graphics coordinates
-      this.canvasSize.y - event.clientY,
-    );
+  private forEachObject(callback: (value: GameObject) => void) {
+    callback(this.panZoom);
+    callback(this.coordinatePlane);
   }
+
+  private sendEvent<N extends keyof GameObject>(name: N, ...args: any) {
+    this.forEachObject(object => {
+      if (name in object) {
+        (object[name] as (...args: any) => any)(...args);
+      }
+    });
+  }
+
+  private translateMousePosition(event: MouseEvent): Vector {
+    // transform mouse position into graphics coordinates
+    this.mousePosition = vec(
+      event.clientX,
+      this.canvasSize.y - event.clientY,
+    ).subtract(this.canvasSize.clone().divide(2));
+    return this.mousePosition;
+  }
+}
+
+export interface GameObject {
+  render?(): void;
+  onMouseDown?(pos: Vector): void;
+  onMouseMove?(pos: Vector): void;
+  onMouseUp?(pos: Vector): void;
+  onMouseEnter?(pos: Vector): void;
+  onMouseLeave?(pos: Vector): void;
+  onWheel?(mouse: Vector, delta: Vector): void;
 }

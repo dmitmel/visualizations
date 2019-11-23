@@ -1,9 +1,9 @@
 import { Vector, vec } from './math';
-import { App } from './App';
+import { App, GameObject } from './App';
 
 const SCROLL_ZOOM_SENSITIVITY = 0.04;
 
-export class PanZoom {
+export class PanZoom implements GameObject {
   translation: Vector = vec(0, 0);
   scale: number = 1;
 
@@ -39,10 +39,7 @@ export class PanZoom {
   onWheel(mouse: Vector, delta: Vector) {
     let newScale = this.scale * (1 - delta.y * SCROLL_ZOOM_SENSITIVITY);
     let zoomFactor = newScale / this.scale;
-    this.translation = mouse
-      .clone()
-      .subtract(this.app.canvasSize.clone().divide(2))
-      .lerp(this.translation, zoomFactor);
+    this.translation = mouse.clone().lerp(this.translation, zoomFactor);
     this.scale = newScale;
   }
 }
