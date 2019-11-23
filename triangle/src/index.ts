@@ -3,9 +3,9 @@ import { Line, Vector, vec } from './math';
 import { PanZoom } from './PanZoom';
 import './style.css';
 
-const BACKGROUND_COLOR = '#222';
+const BACKGROUND_COLOR = '#eee';
 const POINT_RADIUS = 4;
-const POINT_COLOR = '#eee';
+const POINT_COLOR = '#666';
 const LINE_WIDTH = 2;
 const LINE_COLOR = '#888';
 

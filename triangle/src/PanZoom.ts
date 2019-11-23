@@ -1,4 +1,4 @@
-import { Vector, lerp, vec } from './math';
+import { Vector, vec } from './math';
 import { App } from './App';
 
 const SCROLL_ZOOM_SENSITIVITY = 0.01;

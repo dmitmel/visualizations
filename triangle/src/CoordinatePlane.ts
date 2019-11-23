@@ -3,7 +3,7 @@ import { Vector, vec, deg2rad } from './math';
 
 const ARROW_HEAD_LENGTH = 10;
 const ARROW_HEAD_ANGLE = 30;
-const RULER_COLOR = 'white';
+const RULER_COLOR = '#000';
 const RULER_LINE_WIDTH = 2;
 
 export class CoordinatePlane {
