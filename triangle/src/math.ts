@@ -10,6 +10,10 @@ export function rad2deg(radians: number) {
   return (radians / Math.PI) * 180;
 }
 
+export function clamp(val: number, min: number, max: number) {
+  return Math.max(min, Math.min(val, max));
+}
+
 export class Vector {
   x: number;
   y: number;
@@ -39,6 +43,12 @@ export class Vector {
 
   get sqrLength() {
     return this.x * this.x + this.y * this.y;
+  }
+
+  negate() {
+    this.x = -this.x;
+    this.y = -this.y;
+    return this;
   }
 
   add(other: Vector) {
@@ -77,6 +87,10 @@ export class Vector {
     return this.set(lerp(this.x, other.x, t), lerp(this.y, other.y, t));
   }
 
+  clamp(min: Vector, max: Vector) {
+    return this.set(clamp(this.x, min.x, max.x), clamp(this.y, min.y, max.y));
+  }
+
   rotate(angle: number) {
     let c = Math.cos(angle);
     let s = Math.sin(angle);
@@ -88,6 +102,10 @@ export class Vector {
 
 export function vec(x: number, y: number) {
   return new Vector(x, y);
+}
+
+export function vec1(x: number) {
+  return new Vector(x, x);
 }
 
 export class Line {
