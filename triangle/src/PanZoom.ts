@@ -1,4 +1,5 @@
 import { Vector, lerp, vec } from './math';
+import { App } from './App';
 
 const SCROLL_ZOOM_SENSITIVITY = 0.01;
 
@@ -10,10 +11,10 @@ export class PanZoom {
   translationBeforePan: Vector = this.translation;
   mouseBeforePan: Vector = vec(0, 0);
 
-  canvas: HTMLCanvasElement;
+  app: App;
 
-  constructor(canvas: HTMLCanvasElement) {
-    this.canvas = canvas;
+  constructor(app: App) {
+    this.app = app;
   }
 
   onMouseDown(pos: Vector) {
@@ -42,10 +43,9 @@ export class PanZoom {
   onWheel(mouse: Vector, delta: Vector) {
     let newScale = this.scale * (1 - delta.y * SCROLL_ZOOM_SENSITIVITY);
     let zoomFactor = newScale / this.scale;
-    let canvasSize = vec(this.canvas.width, this.canvas.height);
     this.translation = mouse
       .clone()
-      .subtract(canvasSize.divide(2))
+      .subtract(this.app.canvasSize.clone().divide(2))
       .lerp(this.translation, zoomFactor);
     this.scale = newScale;
   }

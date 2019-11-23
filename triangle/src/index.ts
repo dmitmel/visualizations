@@ -1,6 +1,7 @@
+import { App } from './App';
 import { Line, Vector, vec } from './math';
-import './style.css';
 import { PanZoom } from './PanZoom';
+import './style.css';
 
 const BACKGROUND_COLOR = '#222';
 const POINT_RADIUS = 4;
@@ -10,16 +11,10 @@ const LINE_COLOR = '#888';
 
 window.addEventListener('load', () => {
   let canvas = document.getElementById('canvas') as HTMLCanvasElement;
+  let app = new App(canvas);
   let ctx = canvas.getContext('2d');
 
-  function adjustCanvasSize() {
-    canvas.width = document.documentElement.clientWidth;
-    canvas.height = document.documentElement.clientHeight;
-  }
-  adjustCanvasSize();
-  window.addEventListener('resize', adjustCanvasSize);
-
-  let panZoom = new PanZoom(canvas);
+  let panZoom = new PanZoom(app);
 
   function getMouseCoordinates(event: MouseEvent) {
     return vec(event.clientX, event.clientY);
