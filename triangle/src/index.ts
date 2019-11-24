@@ -1,5 +1,6 @@
 import { Engine } from './Engine';
 import { Line, Vector, vec } from './math';
+import { PIXELS_PER_UNIT } from './CoordinatePlane';
 import './style.css';
 
 const BACKGROUND_COLOR = '#eee';
@@ -20,17 +21,26 @@ window.addEventListener('load', () => {
   let iterationsInput: HTMLInputElement = getControl('iterations');
   let startButton: HTMLButtonElement = getControl('start');
   let resetButton: HTMLButtonElement = getControl('reset');
-  startButton.addEventListener('click', () => {
+  startButton.addEventListener('click', event => {
+    event.preventDefault();
     let iterations = iterationsInput.valueAsNumber;
     reset();
     for (let i = 0; i < iterations; i++) nextPoint();
   });
-  resetButton.addEventListener('click', () => {
+  resetButton.addEventListener('click', _event => {
     reset();
   });
 
   let { PI } = Math;
   let TWO_PI = PI * 2;
+
+  function transformPoint(point: Vector) {
+    return point
+      .clone()
+      .multiply(engine.panZoom.scale)
+      .multiply(PIXELS_PER_UNIT)
+      .add(engine.panZoom.translation);
+  }
 
   class Polygon {
     readonly vertices: Vector[];
@@ -61,10 +71,10 @@ window.addEventListener('load', () => {
 
     render() {
       ctx.beginPath();
-      let firstVertex = this.vertices[0];
+      let firstVertex = transformPoint(this.vertices[0]);
       ctx.moveTo(firstVertex.x, firstVertex.y);
       for (let i = 1; i < this.vertices.length; i++) {
-        let vertex = this.vertices[i];
+        let vertex = transformPoint(this.vertices[i]);
         ctx.lineTo(vertex.x, vertex.y);
       }
       ctx.closePath();
@@ -73,7 +83,7 @@ window.addEventListener('load', () => {
       ctx.stroke();
 
       for (let i = 0; i < this.vertices.length; i++) {
-        let vertex = this.vertices[i];
+        let vertex = transformPoint(this.vertices[i]);
         ctx.beginPath();
         ctx.arc(vertex.x, vertex.y, POINT_RADIUS, 0, TWO_PI);
         ctx.fillStyle = POINT_COLOR;
@@ -82,7 +92,7 @@ window.addEventListener('load', () => {
     }
   }
 
-  let outerShape = Polygon.regular(vec(0, 0), 250, 3);
+  let outerShape = Polygon.regular(vec(0, 0), 2.5, 3);
   let outerVertices = outerShape.vertices;
 
   let innerVertices = [];
@@ -159,22 +169,21 @@ window.addEventListener('load', () => {
     ctx.translate(canvas.width / 2, canvas.height / 2);
     ctx.scale(1, -1);
 
-    ctx.save();
-    ctx.translate(engine.panZoom.translation.x, engine.panZoom.translation.y);
-    ctx.scale(engine.panZoom.scale, engine.panZoom.scale);
-
     outerShape.render();
     innerShape.render();
     drawnLines.forEach(line => {
       ctx.beginPath();
-      ctx.moveTo(line.a.x, line.a.y);
-      ctx.lineTo(line.b.x, line.b.y);
+      let a = transformPoint(line.a);
+      ctx.moveTo(a.x, a.y);
+      let b = transformPoint(line.b);
+      ctx.lineTo(b.x, b.y);
       ctx.lineWidth = LINE_WIDTH;
       ctx.strokeStyle = LINE_COLOR;
       ctx.stroke();
     });
     ctx.beginPath();
-    ctx.arc(currentPoint.x, currentPoint.y, POINT_RADIUS, 0, TWO_PI);
+    let currentPoint2 = transformPoint(currentPoint);
+    ctx.arc(currentPoint2.x, currentPoint2.y, POINT_RADIUS, 0, TWO_PI);
     ctx.fillStyle = '#f55';
     ctx.fill();
 
@@ -192,8 +201,6 @@ window.addEventListener('load', () => {
         .add(currentInnerEdge.b)
         .subtract(currentInnerEdge.a),
     );
-
-    ctx.restore();
 
     engine.coordinatePlane.render();
 
