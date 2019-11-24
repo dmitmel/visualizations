@@ -3,7 +3,7 @@ import { PanZoom } from './PanZoom';
 import { CoordinatePlane } from './CoordinatePlane';
 
 export class Engine {
-  canvasSize: Vector;
+  canvasSize!: Vector;
   renderingContext: CanvasRenderingContext2D;
   mousePosition: Vector = vec(0, 0);
 
@@ -14,7 +14,9 @@ export class Engine {
     this.adjustCanvasSize();
     window.addEventListener('resize', () => this.adjustCanvasSize());
 
-    this.renderingContext = this.canvas.getContext('2d');
+    let ctx = this.canvas.getContext('2d');
+    if (ctx == null) throw new Error("couldn't get a 2D rendering context");
+    this.renderingContext = ctx;
 
     canvas.addEventListener('mousedown', event => {
       this.sendEvent('onMouseDown', this.translateMousePosition(event));

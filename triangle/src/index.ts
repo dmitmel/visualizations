@@ -11,7 +11,7 @@ const LINE_COLOR = '#888';
 window.addEventListener('load', () => {
   let canvas = document.getElementById('canvas') as HTMLCanvasElement;
   let engine = new Engine(canvas);
-  let ctx = canvas.getContext('2d');
+  let ctx = canvas.getContext('2d')!;
 
   let { PI } = Math;
   let TWO_PI = PI * 2;
@@ -99,7 +99,7 @@ window.addEventListener('load', () => {
         .subtract(currentInnerEdge.a),
     );
 
-    let intersection = currentOuterEdge.intersection(ray);
+    let intersection = currentOuterEdge.intersection(ray)!;
     drawnLines.push(new Line(currentPoint, intersection));
 
     currentPoint = intersection;
@@ -107,9 +107,9 @@ window.addEventListener('load', () => {
     if (currentEdgeIndex >= innerShape.edges.length) currentEdgeIndex = 0;
   };
 
-  let prevTime: number = null;
-  let prevFpsCalculationTime: number = null;
-  let fps: number = null;
+  let prevTime: number = null!;
+  let prevFpsCalculationTime: number = null!;
+  let fps: number = null!;
   const FPS_RENDER_INTERVAL = 100;
 
   function render(time: number) {

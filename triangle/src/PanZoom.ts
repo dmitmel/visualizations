@@ -31,7 +31,7 @@ export class PanZoom implements GameObject {
   onMouseUp(pos: Vector) {
     this.onMouseMove(pos);
     this.isPanning = false;
-    this.engine.setCursor(null);
+    this.engine.setCursor('');
   }
 
   onMouseLeave(pos: Vector) {

@@ -117,7 +117,7 @@ export class Line {
     this.b = b;
   }
 
-  intersection(other: Line) {
+  intersection(other: Line): Vector | null {
     let { x: x1, y: y1 } = this.a;
     let { x: x2, y: y2 } = this.b;
     let { x: x3, y: y3 } = other.a;
