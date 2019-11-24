@@ -2,7 +2,7 @@ import { vec, Vector } from './math';
 import { PanZoom } from './PanZoom';
 import { CoordinatePlane } from './CoordinatePlane';
 
-export class App {
+export class Engine {
   canvasSize: Vector;
   renderingContext: CanvasRenderingContext2D;
   mousePosition: Vector = vec(0, 0);
@@ -48,7 +48,7 @@ export class App {
     this.coordinatePlane = new CoordinatePlane(this);
   }
 
-  adjustCanvasSize() {
+  private adjustCanvasSize() {
     let { clientWidth: width, clientHeight: height } = document.documentElement;
     this.canvas.width = width;
     this.canvas.height = height;
@@ -75,6 +75,10 @@ export class App {
       this.canvasSize.y - event.clientY,
     ).subtract(this.canvasSize.clone().divide(2));
     return this.mousePosition;
+  }
+
+  setCursor(cursor: string) {
+    this.canvas.style.cursor = cursor;
   }
 }
 

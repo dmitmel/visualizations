@@ -1,5 +1,5 @@
 import { Vector, vec } from './math';
-import { App, GameObject } from './App';
+import { Engine, GameObject } from './Engine';
 
 const SCROLL_ZOOM_SENSITIVITY = 0.04;
 
@@ -11,12 +11,13 @@ export class PanZoom implements GameObject {
   translationBeforePan: Vector = this.translation;
   mouseBeforePan: Vector = vec(0, 0);
 
-  constructor(private app: App) {}
+  constructor(private engine: Engine) {}
 
   onMouseDown(pos: Vector) {
     this.isPanning = true;
     this.translationBeforePan = this.translation.clone();
     this.mouseBeforePan = pos.clone();
+    this.engine.setCursor('move');
   }
 
   onMouseMove(pos: Vector) {
@@ -30,6 +31,7 @@ export class PanZoom implements GameObject {
   onMouseUp(pos: Vector) {
     this.onMouseMove(pos);
     this.isPanning = false;
+    this.engine.setCursor(null);
   }
 
   onMouseLeave(pos: Vector) {

@@ -1,5 +1,5 @@
-import { App, GameObject } from './App';
-import { Vector, vec, deg2rad, vec1 } from './math';
+import { Engine, GameObject } from './Engine';
+import { Vector, deg2rad, vec1 } from './math';
 
 export const PIXELS_PER_UNIT = 100;
 
@@ -15,7 +15,7 @@ const MOUSE_GUIDES_COLOR = '#aaa';
 const MOUSE_GUIDES_LINE_WIDTH = 1;
 
 export class CoordinatePlane implements GameObject {
-  constructor(private app: App) {}
+  constructor(private engine: Engine) {}
 
   render() {
     let {
@@ -23,7 +23,7 @@ export class CoordinatePlane implements GameObject {
       canvasSize,
       mousePosition,
       panZoom,
-    } = this.app;
+    } = this.engine;
     let halfCanvasSize = canvasSize.clone().divide(2);
     let { translation, scale } = panZoom;
 

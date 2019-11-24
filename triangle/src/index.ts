@@ -1,6 +1,5 @@
-import { App } from './App';
+import { Engine } from './Engine';
 import { Line, Vector, vec } from './math';
-import { PanZoom } from './PanZoom';
 import './style.css';
 
 const BACKGROUND_COLOR = '#eee';
@@ -11,7 +10,7 @@ const LINE_COLOR = '#888';
 
 window.addEventListener('load', () => {
   let canvas = document.getElementById('canvas') as HTMLCanvasElement;
-  let app = new App(canvas);
+  let engine = new Engine(canvas);
   let ctx = canvas.getContext('2d');
 
   let { PI } = Math;
@@ -138,8 +137,8 @@ window.addEventListener('load', () => {
     ctx.scale(1, -1);
 
     ctx.save();
-    ctx.translate(app.panZoom.translation.x, app.panZoom.translation.y);
-    ctx.scale(app.panZoom.scale, app.panZoom.scale);
+    ctx.translate(engine.panZoom.translation.x, engine.panZoom.translation.y);
+    ctx.scale(engine.panZoom.scale, engine.panZoom.scale);
 
     outerShape.render();
     innerShape.render();
@@ -173,7 +172,7 @@ window.addEventListener('load', () => {
 
     ctx.restore();
 
-    app.coordinatePlane.render();
+    engine.coordinatePlane.render();
 
     ctx.restore();
 
