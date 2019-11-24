@@ -11,7 +11,23 @@ const LINE_COLOR = '#888';
 window.addEventListener('load', () => {
   let canvas = document.getElementById('canvas') as HTMLCanvasElement;
   let engine = new Engine(canvas);
-  let ctx = canvas.getContext('2d')!;
+  let ctx = engine.renderingContext;
+
+  let controls = document.getElementById('controls') as HTMLFormElement;
+  function getControl<T extends HTMLElement>(name: string): T {
+    return controls.elements.namedItem(name) as T;
+  }
+  let iterationsInput: HTMLInputElement = getControl('iterations');
+  let startButton: HTMLButtonElement = getControl('start');
+  let resetButton: HTMLButtonElement = getControl('reset');
+  startButton.addEventListener('click', () => {
+    let iterations = iterationsInput.valueAsNumber;
+    reset();
+    for (let i = 0; i < iterations; i++) nextPoint();
+  });
+  resetButton.addEventListener('click', () => {
+    reset();
+  });
 
   let { PI } = Math;
   let TWO_PI = PI * 2;
@@ -78,12 +94,19 @@ window.addEventListener('load', () => {
   }
   let innerShape = new Polygon(innerVertices);
 
-  let currentPoint = outerVertices[0].clone().lerp(outerVertices[1], 1 / 2);
+  let startPoint = outerVertices[0].clone().lerp(outerVertices[1], 1 / 2);
+  let currentPoint = startPoint;
   let currentEdgeIndex = 0;
 
   let drawnLines: Line[] = [];
 
-  (window as any).nextPoint = function nextPoint() {
+  function reset() {
+    currentPoint = startPoint;
+    currentEdgeIndex = 0;
+    drawnLines = [];
+  }
+
+  function nextPoint() {
     let currentInnerEdge = innerShape.edges[currentEdgeIndex];
     let currentOuterEdge =
       outerShape.edges[
@@ -105,7 +128,7 @@ window.addEventListener('load', () => {
     currentPoint = intersection;
     currentEdgeIndex++;
     if (currentEdgeIndex >= innerShape.edges.length) currentEdgeIndex = 0;
-  };
+  }
 
   let prevTime: number = null!;
   let prevFpsCalculationTime: number = null!;
@@ -125,7 +148,7 @@ window.addEventListener('load', () => {
     }
 
     if (fps != null) {
-      ctx.font = '24px monospace';
+      ctx.font = '18px sans';
       ctx.textAlign = 'end';
       ctx.textBaseline = 'top';
       ctx.fillStyle = '#000000';

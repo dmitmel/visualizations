@@ -56,6 +56,9 @@ module.exports = {
     inline: true,
     publicPath: '/',
     overlay: true,
+    before(_app, server) {
+      server._watch(`src/**/*.html`);
+    },
   },
 
   module: {
