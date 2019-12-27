@@ -9,7 +9,8 @@ const ARROW_HEAD_ANGLE = 30;
 const AXIS_COLOR = '#000';
 const AXIS_LINE_WIDTH = 2;
 const AXIS_MARGIN = vec1(AXIS_LINE_WIDTH / 2);
-const AXIS_MARK_SIZE = 16;
+const AXIS_MARK_SIZE = AXIS_LINE_WIDTH * 8;
+const AXIS_MARK_COUNT_POWER = 2;
 
 const MOUSE_GUIDES_COLOR = '#aaa';
 const MOUSE_GUIDES_LINE_WIDTH = 1;
@@ -72,18 +73,24 @@ export class CoordinatePlane implements GameObject {
       ctx.lineTo(p2.x, p2.y);
     }
 
-    function drawAxis(axis: 'x' | 'y') {
+    let marksPerUnit = Math.pow(
+      AXIS_MARK_COUNT_POWER,
+      Math.floor(Math.log(scale) / Math.log(AXIS_MARK_COUNT_POWER)),
+    );
+
+    function drawAxis(axis: 'x' | 'y', dir: 1 | -1) {
       let startPoint = halfCanvasSize.clone().negate();
       startPoint[axis] = axisPos[axis];
       let endPoint = halfCanvasSize.clone();
       endPoint[axis] = axisPos[axis];
       arrow(startPoint, endPoint);
 
-      let screenPxPerUnit = scale * PIXELS_PER_UNIT;
-      let offset = (translation[axis] / screenPxPerUnit) % 1;
-      let count = Math.floor(canvasSize[axis] / screenPxPerUnit) + 2;
-      for (let i = 0; i < count; i++) {
-        let markPos = (offset + i - Math.floor(count / 2)) * screenPxPerUnit;
+      let screenPxPerUnit = (scale * PIXELS_PER_UNIT) / marksPerUnit;
+      let offset = translation[axis];
+      let visibleUnits =
+        (halfCanvasSize[axis] - offset * dir) / screenPxPerUnit;
+      for (let i = 1; i <= visibleUnits; i++) {
+        let markPos = offset + i * screenPxPerUnit * dir;
         let halfMarkSizeVec = vec1(AXIS_MARK_SIZE / 2);
         let markStartPoint = axisPos.clone().subtract(halfMarkSizeVec);
         markStartPoint[axis] = markPos;
@@ -94,8 +101,10 @@ export class CoordinatePlane implements GameObject {
       }
     }
 
-    drawAxis('x');
-    drawAxis('y');
+    drawAxis('x', 1);
+    drawAxis('x', -1);
+    drawAxis('y', 1);
+    drawAxis('y', -1);
 
     ctx.save();
     ctx.lineWidth = AXIS_LINE_WIDTH;
