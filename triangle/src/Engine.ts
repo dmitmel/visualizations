@@ -2,6 +2,24 @@ import { vec, Vector } from './math';
 import { PanZoom } from './PanZoom';
 import { CoordinatePlane } from './CoordinatePlane';
 
+// See https://stackoverflow.com/a/37474225/12005228
+function getScrollLineHeight() {
+  let iframe = document.createElement('iframe');
+  document.body.appendChild(iframe);
+  let iframeWindow = iframe.contentWindow!;
+  let iframeDoc = iframeWindow.document;
+  iframeDoc.open();
+  iframeDoc.write(
+    '<!DOCTYPE html><html><head></head><body><span>a</span></body></html>',
+  );
+  iframeDoc.close();
+  let span = iframeDoc.body.firstElementChild! as HTMLSpanElement;
+  let result = span.offsetHeight;
+  document.body.removeChild(iframe);
+  return result;
+}
+const SCROLL_LINE_HEIGHT = getScrollLineHeight();
+
 export class Engine {
   canvasSize!: Vector;
   renderingContext: CanvasRenderingContext2D;
@@ -39,11 +57,21 @@ export class Engine {
     });
 
     canvas.addEventListener('wheel', event => {
-      this.sendEvent(
-        'onWheel',
-        this.translateMousePosition(event),
-        vec(event.deltaX, event.deltaY),
-      );
+      let delta = vec(event.deltaX, event.deltaY);
+      switch (event.deltaMode) {
+        case WheelEvent.DOM_DELTA_PIXEL:
+          // do nothing, deltaX and deltaY are already in pixels
+          break;
+        case WheelEvent.DOM_DELTA_LINE:
+          // convert deltaX and deltaY to pixels
+          delta.multiply(SCROLL_LINE_HEIGHT);
+          break;
+        case WheelEvent.DOM_DELTA_PAGE:
+          // simply ignore other events
+          return;
+      }
+
+      this.sendEvent('onWheel', this.translateMousePosition(event), delta);
     });
 
     this.panZoom = new PanZoom(this);
