@@ -1,7 +1,7 @@
 import { Engine, GameObject } from './Engine';
 import { Vector, deg2rad, vec1 } from './math';
 
-export const PIXELS_PER_UNIT = 100;
+const PIXELS_PER_UNIT = 100;
 
 const ARROW_HEAD_LENGTH = 10;
 const ARROW_HEAD_ANGLE = 30;
@@ -17,6 +17,15 @@ const MOUSE_GUIDES_LINE_WIDTH = 1;
 
 export class CoordinatePlane implements GameObject {
   constructor(private engine: Engine) {}
+
+  transformPoint(point: Vector): Vector {
+    let { translation, scale } = this.engine.panZoom;
+    return point
+      .clone()
+      .multiply(scale)
+      .multiply(PIXELS_PER_UNIT)
+      .add(translation);
+  }
 
   render() {
     let {

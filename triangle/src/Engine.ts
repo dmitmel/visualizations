@@ -1,6 +1,7 @@
 import { vec, Vector } from './math';
 import { PanZoom } from './PanZoom';
 import { CoordinatePlane } from './CoordinatePlane';
+import { Geometry } from './Geometry';
 
 // See https://stackoverflow.com/a/37474225/12005228
 function getScrollLineHeight() {
@@ -27,6 +28,7 @@ export class Engine {
 
   panZoom: PanZoom;
   coordinatePlane: CoordinatePlane;
+  geometry: Geometry;
 
   constructor(private canvas: HTMLCanvasElement) {
     this.adjustCanvasSize();
@@ -76,6 +78,7 @@ export class Engine {
 
     this.panZoom = new PanZoom(this);
     this.coordinatePlane = new CoordinatePlane(this);
+    this.geometry = new Geometry(this);
   }
 
   private adjustCanvasSize() {
@@ -88,6 +91,7 @@ export class Engine {
   private forEachObject(callback: (value: GameObject) => void) {
     callback(this.panZoom);
     callback(this.coordinatePlane);
+    callback(this.geometry);
   }
 
   private sendEvent<N extends keyof GameObject>(name: N, ...args: any) {
