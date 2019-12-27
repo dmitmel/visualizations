@@ -4,6 +4,8 @@ import { CoordinatePlane } from './CoordinatePlane';
 import { Geometry } from './Geometry';
 import { FPSCounter } from './FPSCounter';
 
+const BACKGROUND_COLOR = '#eeeeee';
+
 // See https://stackoverflow.com/a/37474225/12005228
 function getScrollLineHeight() {
   let iframe = document.createElement('iframe');
@@ -85,6 +87,12 @@ export class Engine {
     this.coordinatePlane = new CoordinatePlane(this);
     this.geometry = new Geometry(this);
     this.fpsCounter = new FPSCounter(this);
+
+    let this2 = this;
+    requestAnimationFrame(function animFrameCallback(timestamp: number) {
+      this2.onAnimationFrame(timestamp);
+      requestAnimationFrame(animFrameCallback);
+    });
   }
 
   private adjustCanvasSize() {
@@ -117,8 +125,25 @@ export class Engine {
     return this.mousePosition;
   }
 
-  render() {
+  private onAnimationFrame(timestamp: number) {
+    this.renderTime = timestamp;
+    this.render();
+    this.prevRenderTime = this.renderTime;
+  }
+
+  private render() {
+    let ctx = this.renderingContext;
+    let { width, height } = this.canvas;
+
+    ctx.fillStyle = BACKGROUND_COLOR;
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.save();
+    ctx.translate(width / 2, height / 2);
+
     this.sendEvent('render');
+
+    ctx.restore();
   }
 
   setCursor(cursor: string) {
