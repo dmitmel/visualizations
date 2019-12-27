@@ -2,6 +2,7 @@ import { vec, Vector } from './math';
 import { PanZoom } from './PanZoom';
 import { CoordinatePlane } from './CoordinatePlane';
 import { Geometry } from './Geometry';
+import { FPSCounter } from './FPSCounter';
 
 // See https://stackoverflow.com/a/37474225/12005228
 function getScrollLineHeight() {
@@ -24,11 +25,15 @@ const SCROLL_LINE_HEIGHT = getScrollLineHeight();
 export class Engine {
   canvasSize!: Vector;
   renderingContext: CanvasRenderingContext2D;
+  prevRenderTime: number = 0;
+  renderTime: number = 0;
+
   mousePosition: Vector = vec(0, 0);
 
   panZoom: PanZoom;
   coordinatePlane: CoordinatePlane;
   geometry: Geometry;
+  fpsCounter: FPSCounter;
 
   constructor(private canvas: HTMLCanvasElement) {
     this.adjustCanvasSize();
@@ -79,6 +84,7 @@ export class Engine {
     this.panZoom = new PanZoom(this);
     this.coordinatePlane = new CoordinatePlane(this);
     this.geometry = new Geometry(this);
+    this.fpsCounter = new FPSCounter(this);
   }
 
   private adjustCanvasSize() {
@@ -92,6 +98,7 @@ export class Engine {
     callback(this.panZoom);
     callback(this.coordinatePlane);
     callback(this.geometry);
+    callback(this.fpsCounter);
   }
 
   private sendEvent<N extends keyof GameObject>(name: N, ...args: any) {
@@ -104,11 +111,14 @@ export class Engine {
 
   private translateMousePosition(event: MouseEvent): Vector {
     // transform mouse position into graphics coordinates
-    this.mousePosition = vec(
-      event.clientX,
-      this.canvasSize.y - event.clientY,
-    ).subtract(this.canvasSize.clone().divide(2));
+    this.mousePosition = vec(event.clientX, event.clientY).subtract(
+      this.canvasSize.clone().divide(2),
+    );
     return this.mousePosition;
+  }
+
+  render() {
+    this.sendEvent('render');
   }
 
   setCursor(cursor: string) {
