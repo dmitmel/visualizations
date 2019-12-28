@@ -4,6 +4,9 @@ import { CoordinatePlane } from './CoordinatePlane';
 import { Geometry } from './Geometry';
 import { FPSCounter } from './FPSCounter';
 
+const MAX_FPS = Infinity;
+const FPS_SAMPLES_MAX_COUNT = 16;
+
 const BACKGROUND_COLOR = '#eeeeee';
 
 // See https://stackoverflow.com/a/37474225/12005228
@@ -27,8 +30,13 @@ const SCROLL_LINE_HEIGHT = getScrollLineHeight();
 export class Engine {
   canvasSize!: Vector;
   renderingContext: CanvasRenderingContext2D;
-  prevRenderTime: number = 0;
-  renderTime: number = 0;
+
+  renderTime: number = performance.now();
+  prevRenderTime: number = this.renderTime;
+  averageFps: number = 0;
+  private fpsSamples: number[] = new Array(FPS_SAMPLES_MAX_COUNT);
+  private fpsSamplesCount: number = 0;
+  private newestFpsSampleIndex: number = 0;
 
   mousePosition: Vector = vec(0, 0);
 
@@ -126,8 +134,36 @@ export class Engine {
   }
 
   private onAnimationFrame(timestamp: number) {
+    let shouldRender = true;
+
+    if (this.fpsSamplesCount > 0) {
+      let fpsSamplesSum = 0;
+      for (let i = 0; i < this.fpsSamplesCount; i++) {
+        fpsSamplesSum += this.fpsSamples[i];
+      }
+      this.averageFps = fpsSamplesSum / this.fpsSamplesCount;
+
+      if (this.averageFps > MAX_FPS) shouldRender = false;
+    }
+
     this.renderTime = timestamp;
-    this.render();
+
+    let fpsDuringThisFrame = 0;
+    if (shouldRender) {
+      this.render();
+      let deltaRenderTime = this.renderTime - this.prevRenderTime;
+      if (deltaRenderTime > 0) fpsDuringThisFrame = 1000 / deltaRenderTime;
+    }
+
+    this.fpsSamples[this.newestFpsSampleIndex] = fpsDuringThisFrame;
+    if (this.fpsSamplesCount < this.fpsSamples.length) {
+      this.fpsSamplesCount++;
+    }
+    this.newestFpsSampleIndex++;
+    if (this.newestFpsSampleIndex >= this.fpsSamples.length) {
+      this.newestFpsSampleIndex = 0;
+    }
+
     this.prevRenderTime = this.renderTime;
   }
 

@@ -1,11 +1,11 @@
 import { Vector, vec, vec1 } from './math';
 import { Engine, GameObject } from './Engine';
 
-const FPS_CALCULATION_INTERVAL = 100;
 const TEXT_MARGIN = vec1(10);
+const UPDATE_INTERVAL = 100;
 
 export class FPSCounter implements GameObject {
-  prevFpsCalculationTime: number = 0;
+  prevUpdateTime: number = this.engine.renderTime;
   fps: number = 0;
 
   constructor(private engine: Engine) {}
@@ -14,17 +14,13 @@ export class FPSCounter implements GameObject {
     let {
       renderingContext: ctx,
       canvasSize,
-      prevRenderTime,
       renderTime,
+      averageFps,
     } = this.engine;
 
-    let deltaRenderTime = renderTime - prevRenderTime;
-    if (
-      deltaRenderTime > 0 &&
-      renderTime - this.prevFpsCalculationTime > FPS_CALCULATION_INTERVAL
-    ) {
-      this.fps = Math.floor(1000 / deltaRenderTime);
-      this.prevFpsCalculationTime = renderTime;
+    if (renderTime - this.prevUpdateTime > UPDATE_INTERVAL) {
+      this.fps = averageFps;
+      this.prevUpdateTime = renderTime;
     }
 
     ctx.font = '18px sans';
@@ -32,7 +28,7 @@ export class FPSCounter implements GameObject {
     ctx.textBaseline = 'top';
     ctx.fillStyle = '#000000';
     ctx.fillText(
-      `${this.fps} FPS`,
+      `${this.fps.toFixed(2)} FPS`,
       canvasSize.x / 2 - TEXT_MARGIN.x,
       TEXT_MARGIN.y - canvasSize.y / 2,
     );
