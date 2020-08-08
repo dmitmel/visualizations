@@ -53,27 +53,27 @@ export class Engine {
     if (ctx == null) throw new Error("couldn't get a 2D rendering context");
     this.renderingContext = ctx;
 
-    canvas.addEventListener('mousedown', event => {
+    canvas.addEventListener('mousedown', (event) => {
       this.sendEvent('onMouseDown', this.translateMousePosition(event));
     });
 
-    canvas.addEventListener('mousemove', event => {
+    canvas.addEventListener('mousemove', (event) => {
       this.sendEvent('onMouseMove', this.translateMousePosition(event));
     });
 
-    canvas.addEventListener('mouseup', event => {
+    canvas.addEventListener('mouseup', (event) => {
       this.sendEvent('onMouseUp', this.translateMousePosition(event));
     });
 
-    canvas.addEventListener('mouseenter', event => {
+    canvas.addEventListener('mouseenter', (event) => {
       this.sendEvent('onMouseEnter', this.translateMousePosition(event));
     });
 
-    canvas.addEventListener('mouseleave', event => {
+    canvas.addEventListener('mouseleave', (event) => {
       this.sendEvent('onMouseLeave', this.translateMousePosition(event));
     });
 
-    canvas.addEventListener('wheel', event => {
+    canvas.addEventListener('wheel', (event) => {
       let delta = vec(event.deltaX, event.deltaY);
       switch (event.deltaMode) {
         case WheelEvent.DOM_DELTA_PIXEL:
@@ -118,7 +118,7 @@ export class Engine {
   }
 
   private sendEvent<N extends keyof GameObject>(name: N, ...args: any) {
-    this.forEachObject(object => {
+    this.forEachObject((object) => {
       if (name in object) {
         (object[name] as (...args: any) => any)(...args);
       }

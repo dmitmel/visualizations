@@ -159,7 +159,7 @@ module.exports = {
     }),
 
     IS_DEV ? new webpack.HotModuleReplacementPlugin() : null,
-  ].filter(p => p != null),
+  ].filter((p) => p != null),
 
   optimization: {
     // extracts webpack runtime into a different chunk

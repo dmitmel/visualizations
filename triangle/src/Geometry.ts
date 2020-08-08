@@ -64,13 +64,13 @@ export class Geometry implements GameObject {
     let iterationsInput: HTMLInputElement = getControl('iterations');
     let startButton: HTMLButtonElement = getControl('start');
     let resetButton: HTMLButtonElement = getControl('reset');
-    startButton.addEventListener('click', event => {
+    startButton.addEventListener('click', (event) => {
       event.preventDefault();
       let iterations = iterationsInput.valueAsNumber;
       this.reset();
       for (let i = 0; i < iterations; i++) this.nextPoint();
     });
-    resetButton.addEventListener('click', _event => {
+    resetButton.addEventListener('click', (_event) => {
       this.reset();
     });
   }
@@ -106,7 +106,7 @@ export class Geometry implements GameObject {
     this.renderPolygon(this.outerShape);
     this.renderPolygon(this.innerShape);
 
-    this.drawnLines.forEach(line => this.renderLine(line));
+    this.drawnLines.forEach((line) => this.renderLine(line));
 
     this.renderPoint(this.currentPoint, '#ff5555');
 
