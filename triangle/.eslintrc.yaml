@@ -3,7 +3,6 @@ extends:
   - eslint-config-dmitmel/presets/formatting
 env:
   browser: true
-parser: babel-eslint
 parserOptions:
   sourceType: module
 overrides:
