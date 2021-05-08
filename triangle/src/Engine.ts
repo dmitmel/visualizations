@@ -27,6 +27,7 @@ const SCROLL_LINE_HEIGHT = getScrollLineHeight();
 
 export class Engine {
   public canvasSize!: Vector;
+  public halfCanvasSize!: Vector;
   public renderingContext: CanvasRenderingContext2D;
 
   public renderTime: number = performance.now();
@@ -103,10 +104,11 @@ export class Engine {
   }
 
   private adjustCanvasSize(): void {
-    let { clientWidth: width, clientHeight: height } = document.documentElement;
-    this.canvas.width = width;
-    this.canvas.height = height;
-    this.canvasSize = vec(width, height);
+    let { clientWidth: w, clientHeight: h } = document.documentElement;
+    this.canvas.width = w;
+    this.canvas.height = h;
+    this.canvasSize = vec(w, h);
+    this.halfCanvasSize = vec(w / 2, h / 2);
   }
 
   private forEachObject(callback: (value: GameObject) => void): void {
@@ -126,9 +128,7 @@ export class Engine {
 
   private translateMousePosition(event: MouseEvent): Vector {
     // transform mouse position into graphics coordinates
-    this.mousePosition = vec(event.clientX, event.clientY).subtract(
-      this.canvasSize.clone().divide(2),
-    );
+    this.mousePosition = vec(event.clientX, event.clientY).subtract(this.halfCanvasSize);
     return this.mousePosition;
   }
 
