@@ -2,13 +2,29 @@ extends:
   - eslint-config-dmitmel/presets/node
   - eslint-config-dmitmel/presets/formatting
 env:
+  node: true
   browser: true
 parserOptions:
   sourceType: module
+
+settings:
+  node:
+    tryExtensions: ['.ts', '.js', '.json']
+
+rules:
+  func-names: off
+  node/no-unsupported-features/es-syntax:
+    - error
+    - ignores:
+        - modules
+        - dynamicImport
+  node/no-unpublished-require: off
+
 overrides:
-  - files: ./src/**/*.js
-    rules:
-      node/no-unsupported-features/es-syntax: off
-  - files: ./webpack.config.js
-    rules:
-      node/no-unpublished-require: off
+  - files: '**/*.ts'
+    extends: eslint-config-dmitmel/presets/typescript-addon
+
+  - files: 'src/**/*.ts'
+    extends: eslint-config-dmitmel/rules/typescript/with-type-checking
+    parserOptions:
+      project: 'tsconfig.json'

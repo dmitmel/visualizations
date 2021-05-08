@@ -1,4 +1,4 @@
-import { Vector, Line, vec } from './math';
+import { Line, Vector, vec } from './math';
 import { Engine, GameObject } from './Engine';
 
 const POINT_RADIUS = 4;
@@ -7,10 +7,10 @@ const LINE_WIDTH = 2;
 const LINE_COLOR = '#888';
 
 class Polygon {
-  readonly vertices: Vector[];
-  readonly edges: Line[];
+  public readonly vertices: Vector[];
+  public readonly edges: Line[];
 
-  constructor(vertices: Vector[]) {
+  public constructor(vertices: Vector[]) {
     this.vertices = vertices;
     this.edges = [];
     for (let i = 0; i < vertices.length; i++) {
@@ -20,7 +20,7 @@ class Polygon {
     }
   }
 
-  static regular(center: Vector, radius: number, vertexCount: number) {
+  public static regular(center: Vector, radius: number, vertexCount: number): Polygon {
     let vertices = [];
     for (let i = 0; i < vertexCount; i++) {
       vertices.push(
@@ -35,14 +35,14 @@ class Polygon {
 }
 
 export class Geometry implements GameObject {
-  outerShape: Polygon = Polygon.regular(vec(0, 0), 2.5, 3);
-  innerShape: Polygon;
-  startPoint: Vector;
-  currentPoint: Vector;
-  currentEdgeIndex: number = 0;
-  drawnLines: Line[] = [];
+  public outerShape: Polygon = Polygon.regular(vec(0, 0), 2.5, 3);
+  public innerShape: Polygon;
+  public startPoint: Vector;
+  public currentPoint: Vector;
+  public currentEdgeIndex = 0;
+  public drawnLines: Line[] = [];
 
-  constructor(private engine: Engine) {
+  public constructor(private engine: Engine) {
     let outerVertices = this.outerShape.vertices;
 
     let innerVertices = [];
@@ -75,34 +75,30 @@ export class Geometry implements GameObject {
     });
   }
 
-  private reset() {
+  private reset(): void {
     this.currentPoint = this.startPoint;
     this.currentEdgeIndex = 0;
     this.drawnLines = [];
   }
 
-  private nextPoint() {
+  private nextPoint(): void {
     let currentInnerEdge = this.innerShape.edges[this.currentEdgeIndex];
     let currentOuterEdge = this.outerShape.edges[
       (this.currentEdgeIndex + 1) % this.outerShape.edges.length
     ];
     let ray = new Line(
       this.currentPoint,
-      this.currentPoint
-        .clone()
-        .add(currentInnerEdge.b)
-        .subtract(currentInnerEdge.a),
+      this.currentPoint.clone().add(currentInnerEdge.b).subtract(currentInnerEdge.a),
     );
 
     let intersection = currentOuterEdge.intersection(ray)!;
     this.drawnLines.push(new Line(this.currentPoint, intersection));
 
     this.currentPoint = intersection;
-    this.currentEdgeIndex =
-      (this.currentEdgeIndex + 1) % this.innerShape.edges.length;
+    this.currentEdgeIndex = (this.currentEdgeIndex + 1) % this.innerShape.edges.length;
   }
 
-  render() {
+  public render(): void {
     this.renderPolygon(this.outerShape);
     this.renderPolygon(this.innerShape);
 
@@ -123,7 +119,7 @@ export class Geometry implements GameObject {
     // );
   }
 
-  private renderPoint(point: Vector, fillColor = POINT_COLOR) {
+  private renderPoint(point: Vector, fillColor = POINT_COLOR): void {
     let { renderingContext: ctx, coordinatePlane } = this.engine;
 
     ctx.beginPath();
@@ -133,7 +129,7 @@ export class Geometry implements GameObject {
     ctx.fill();
   }
 
-  private renderLine(line: Line) {
+  private renderLine(line: Line): void {
     let { renderingContext: ctx, coordinatePlane } = this.engine;
 
     ctx.beginPath();
@@ -146,7 +142,7 @@ export class Geometry implements GameObject {
     ctx.stroke();
   }
 
-  private renderPolygon(polygon: Polygon) {
+  private renderPolygon(polygon: Polygon): void {
     let { renderingContext: ctx, coordinatePlane } = this.engine;
     let { vertices } = polygon;
 

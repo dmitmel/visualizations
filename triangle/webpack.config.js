@@ -100,10 +100,10 @@ module.exports = {
     new webpack.ProgressPlugin(),
     new CleanWebpackPlugin(),
 
-    // new ESLintWebpackPlugin({
-    //   files: paths.resolve(__dirname, 'src'),
-    //   extensions: ['js', 'ts'],
-    // }),
+    new ESLintWebpackPlugin({
+      files: paths.resolve(__dirname, 'src'),
+      extensions: ['js', 'ts'],
+    }),
 
     new MiniCssExtractPlugin({
       filename: assetURL('[name]', '.[chunkhash:8]', '.css'),

@@ -1,4 +1,4 @@
-import { vec, Vector } from './math';
+import { Vector, vec } from './math';
 import { PanZoom } from './PanZoom';
 import { CoordinatePlane } from './CoordinatePlane';
 import { Geometry } from './Geometry';
@@ -10,15 +10,13 @@ const FPS_SAMPLES_MAX_COUNT = 16;
 const BACKGROUND_COLOR = '#eeeeee';
 
 // See https://stackoverflow.com/a/37474225/12005228
-function getScrollLineHeight() {
+function getScrollLineHeight(): number {
   let iframe = document.createElement('iframe');
   document.body.appendChild(iframe);
   let iframeWindow = iframe.contentWindow!;
   let iframeDoc = iframeWindow.document;
   iframeDoc.open();
-  iframeDoc.write(
-    '<!DOCTYPE html><html><head></head><body><span>a</span></body></html>',
-  );
+  iframeDoc.write('<!DOCTYPE html><html><head></head><body><span>a</span></body></html>');
   iframeDoc.close();
   let span = iframeDoc.body.firstElementChild! as HTMLSpanElement;
   let result = span.offsetHeight;
@@ -28,24 +26,24 @@ function getScrollLineHeight() {
 const SCROLL_LINE_HEIGHT = getScrollLineHeight();
 
 export class Engine {
-  canvasSize!: Vector;
-  renderingContext: CanvasRenderingContext2D;
+  public canvasSize!: Vector;
+  public renderingContext: CanvasRenderingContext2D;
 
-  renderTime: number = performance.now();
-  prevRenderTime: number = this.renderTime;
-  averageFps: number = 0;
+  public renderTime: number = performance.now();
+  public prevRenderTime: number = this.renderTime;
+  public averageFps = 0;
   private fpsSamples: number[] = new Array(FPS_SAMPLES_MAX_COUNT);
-  private fpsSamplesCount: number = 0;
-  private newestFpsSampleIndex: number = 0;
+  private fpsSamplesCount = 0;
+  private newestFpsSampleIndex = 0;
 
-  mousePosition: Vector = vec(0, 0);
+  public mousePosition: Vector = vec(0, 0);
 
-  panZoom: PanZoom;
-  coordinatePlane: CoordinatePlane;
-  geometry: Geometry;
-  fpsCounter: FPSCounter;
+  public panZoom: PanZoom;
+  public coordinatePlane: CoordinatePlane;
+  public geometry: Geometry;
+  public fpsCounter: FPSCounter;
 
-  constructor(private canvas: HTMLCanvasElement) {
+  public constructor(private canvas: HTMLCanvasElement) {
     this.adjustCanvasSize();
     window.addEventListener('resize', () => this.adjustCanvasSize());
 
@@ -96,6 +94,7 @@ export class Engine {
     this.geometry = new Geometry(this);
     this.fpsCounter = new FPSCounter(this);
 
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     let this2 = this;
     requestAnimationFrame(function animFrameCallback(timestamp: number) {
       this2.onAnimationFrame(timestamp);
@@ -103,24 +102,24 @@ export class Engine {
     });
   }
 
-  private adjustCanvasSize() {
+  private adjustCanvasSize(): void {
     let { clientWidth: width, clientHeight: height } = document.documentElement;
     this.canvas.width = width;
     this.canvas.height = height;
     this.canvasSize = vec(width, height);
   }
 
-  private forEachObject(callback: (value: GameObject) => void) {
+  private forEachObject(callback: (value: GameObject) => void): void {
     callback(this.panZoom);
     callback(this.coordinatePlane);
     callback(this.geometry);
     callback(this.fpsCounter);
   }
 
-  private sendEvent<N extends keyof GameObject>(name: N, ...args: any) {
+  private sendEvent<N extends keyof GameObject>(name: N, ...args: unknown[]): void {
     this.forEachObject((object) => {
       if (name in object) {
-        (object[name] as (...args: any) => any)(...args);
+        (object[name] as (...args: unknown[]) => void)(...args);
       }
     });
   }
@@ -133,7 +132,7 @@ export class Engine {
     return this.mousePosition;
   }
 
-  private onAnimationFrame(timestamp: number) {
+  private onAnimationFrame(timestamp: number): void {
     let shouldRender = true;
 
     if (this.fpsSamplesCount > 0) {
@@ -167,7 +166,7 @@ export class Engine {
     this.prevRenderTime = this.renderTime;
   }
 
-  private render() {
+  private render(): void {
     let ctx = this.renderingContext;
     let { width, height } = this.canvas;
 
@@ -182,7 +181,7 @@ export class Engine {
     ctx.restore();
   }
 
-  setCursor(cursor: string) {
+  public setCursor(cursor: string): void {
     this.canvas.style.cursor = cursor;
   }
 }

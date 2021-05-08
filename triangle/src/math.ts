@@ -1,97 +1,91 @@
-export function lerp(a: number, b: number, t: number) {
+export function lerp(a: number, b: number, t: number): number {
   return a + (b - a) * t;
 }
 
-export function deg2rad(degrees: number) {
+export function deg2rad(degrees: number): number {
   return (degrees / 180) * Math.PI;
 }
 
-export function rad2deg(radians: number) {
+export function rad2deg(radians: number): number {
   return (radians / Math.PI) * 180;
 }
 
-export function clamp(val: number, min: number, max: number) {
+export function clamp(val: number, min: number, max: number): number {
   return Math.max(min, Math.min(val, max));
 }
 
 export class Vector {
-  x: number;
-  y: number;
+  public constructor(public x: number, public y: number) {}
 
-  constructor(x: number, y: number) {
-    this.x = x;
-    this.y = y;
-  }
-
-  clone() {
+  public clone(): Vector {
     return new Vector(this.x, this.y);
   }
 
-  set(x: number, y: number) {
+  public set(x: number, y: number): Vector {
     this.x = x;
     this.y = y;
     return this;
   }
 
-  get length() {
+  public get length(): number {
     return Math.sqrt(this.x * this.x + this.y * this.y);
   }
 
-  set length(val) {
+  public set length(val: number) {
     this.setLength(val);
   }
 
-  get sqrLength() {
+  public get sqrLength(): number {
     return this.x * this.x + this.y * this.y;
   }
 
-  negate() {
+  public negate(): Vector {
     this.x = -this.x;
     this.y = -this.y;
     return this;
   }
 
-  add(other: Vector) {
+  public add(other: Vector): Vector {
     this.x += other.x;
     this.y += other.y;
     return this;
   }
 
-  subtract(other: Vector) {
+  public subtract(other: Vector): Vector {
     this.x -= other.x;
     this.y -= other.y;
     return this;
   }
 
-  multiply(scalar: number) {
+  public multiply(scalar: number): Vector {
     this.x *= scalar;
     this.y *= scalar;
     return this;
   }
 
-  divide(scalar: number) {
+  public divide(scalar: number): Vector {
     this.x /= scalar;
     this.y /= scalar;
     return this;
   }
 
-  normalize() {
+  public normalize(): Vector {
     return this.divide(this.length);
   }
 
-  setLength(newLength: number) {
+  public setLength(newLength: number): Vector {
     return this.normalize().multiply(newLength);
   }
 
-  lerp(other: Vector, t: number) {
+  public lerp(other: Vector, t: number): Vector {
     return this.set(lerp(this.x, other.x, t), lerp(this.y, other.y, t));
   }
 
-  clamp(min: Vector, max: Vector) {
+  public clamp(min: Vector, max: Vector): Vector {
     return this.set(clamp(this.x, min.x, max.x), clamp(this.y, min.y, max.y));
   }
 
-  rotate(angle: number) {
+  public rotate(angle: number): Vector {
     let c = Math.cos(angle);
     let s = Math.sin(angle);
     let x2 = this.x * c - this.y * s;
@@ -100,24 +94,18 @@ export class Vector {
   }
 }
 
-export function vec(x: number, y: number) {
+export function vec(x: number, y: number): Vector {
   return new Vector(x, y);
 }
 
-export function vec1(x: number) {
+export function vec1(x: number): Vector {
   return new Vector(x, x);
 }
 
 export class Line {
-  readonly a: Vector;
-  readonly b: Vector;
+  public constructor(public a: Vector, public b: Vector) {}
 
-  constructor(a: Vector, b: Vector) {
-    this.a = a;
-    this.b = b;
-  }
-
-  intersection(other: Line): Vector | null {
+  public intersection(other: Line): Vector | null {
     let { x: x1, y: y1 } = this.a;
     let { x: x2, y: y2 } = this.b;
     let { x: x3, y: y3 } = other.a;

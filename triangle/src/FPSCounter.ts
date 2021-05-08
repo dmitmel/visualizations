@@ -1,22 +1,17 @@
-import { Vector, vec, vec1 } from './math';
+import { vec1 } from './math';
 import { Engine, GameObject } from './Engine';
 
 const TEXT_MARGIN = vec1(10);
 const UPDATE_INTERVAL = 100;
 
 export class FPSCounter implements GameObject {
-  prevUpdateTime: number = this.engine.renderTime;
-  fps: number = 0;
+  public prevUpdateTime: number = this.engine.renderTime;
+  public fps = 0;
 
-  constructor(private engine: Engine) {}
+  public constructor(private engine: Engine) {}
 
-  render() {
-    let {
-      renderingContext: ctx,
-      canvasSize,
-      renderTime,
-      averageFps,
-    } = this.engine;
+  public render(): void {
+    let { renderingContext: ctx, canvasSize, renderTime, averageFps } = this.engine;
 
     if (renderTime - this.prevUpdateTime > UPDATE_INTERVAL) {
       this.fps = averageFps;

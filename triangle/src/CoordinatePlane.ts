@@ -16,24 +16,15 @@ const MOUSE_GUIDES_COLOR = '#aaa';
 const MOUSE_GUIDES_LINE_WIDTH = 1;
 
 export class CoordinatePlane implements GameObject {
-  constructor(private engine: Engine) {}
+  public constructor(private engine: Engine) {}
 
-  transformPoint(point: Vector): Vector {
+  public transformPoint(point: Vector): Vector {
     let { translation, scale } = this.engine.panZoom;
-    return point
-      .clone()
-      .multiply(scale)
-      .multiply(PIXELS_PER_UNIT)
-      .add(translation);
+    return point.clone().multiply(scale).multiply(PIXELS_PER_UNIT).add(translation);
   }
 
-  render() {
-    let {
-      renderingContext: ctx,
-      canvasSize,
-      mousePosition,
-      panZoom,
-    } = this.engine;
+  public render(): void {
+    let { renderingContext: ctx, canvasSize, mousePosition, panZoom } = this.engine;
     let halfCanvasSize = canvasSize.clone().divide(2);
     let { translation, scale } = panZoom;
 
@@ -59,7 +50,7 @@ export class CoordinatePlane implements GameObject {
 
     ctx.beginPath();
 
-    function arrow(from: Vector, to: Vector) {
+    function arrow(from: Vector, to: Vector): void {
       ctx.moveTo(from.x, from.y);
       ctx.lineTo(to.x, to.y);
 
@@ -77,7 +68,7 @@ export class CoordinatePlane implements GameObject {
       Math.floor(Math.log(scale) / Math.log(AXIS_MARK_COUNT_POWER)),
     );
 
-    function drawAxis(axis: 'x' | 'y', dir: 1 | -1) {
+    function drawAxis(axis: 'x' | 'y', dir: 1 | -1): void {
       let startPoint = halfCanvasSize.clone().negate();
       startPoint[axis] = axisPos[axis];
       let endPoint = halfCanvasSize.clone();
@@ -86,8 +77,7 @@ export class CoordinatePlane implements GameObject {
 
       let screenPxPerUnit = (scale * PIXELS_PER_UNIT) / marksPerUnit;
       let offset = translation[axis];
-      let visibleUnits =
-        (halfCanvasSize[axis] - offset * dir) / screenPxPerUnit;
+      let visibleUnits = (halfCanvasSize[axis] - offset * dir) / screenPxPerUnit;
       for (let i = 1; i <= visibleUnits; i++) {
         let markPos = offset + i * screenPxPerUnit * dir;
         let halfMarkSizeVec = vec1(AXIS_MARK_SIZE / 2);

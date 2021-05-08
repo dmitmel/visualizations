@@ -1,4 +1,4 @@
-import { Vector, vec, clamp } from './math';
+import { Vector, clamp, vec } from './math';
 import { Engine, GameObject } from './Engine';
 
 const SCROLL_ZOOM_SENSITIVITY = 0.005;
@@ -6,41 +6,38 @@ const SCROLL_ZOOM_SENSITIVITY = 0.005;
 const MAX_ZOOM_CHANGE_PER_EVENT = 0.5;
 
 export class PanZoom implements GameObject {
-  translation: Vector = vec(0, 0);
-  scale: number = 1;
+  public translation: Vector = vec(0, 0);
+  public scale = 1;
 
-  isPanning: boolean = false;
-  translationBeforePan: Vector = this.translation;
-  mouseBeforePan: Vector = vec(0, 0);
+  public isPanning = false;
+  public translationBeforePan: Vector = this.translation;
+  public mouseBeforePan: Vector = vec(0, 0);
 
-  constructor(private engine: Engine) {}
+  public constructor(private engine: Engine) {}
 
-  onMouseDown(pos: Vector) {
+  public onMouseDown(pos: Vector): void {
     this.isPanning = true;
     this.translationBeforePan = this.translation.clone();
     this.mouseBeforePan = pos.clone();
     this.engine.setCursor('move');
   }
 
-  onMouseMove(pos: Vector) {
+  public onMouseMove(pos: Vector): void {
     if (!this.isPanning) return;
-    this.translation = this.translationBeforePan
-      .clone()
-      .subtract(this.mouseBeforePan)
-      .add(pos);
+    this.translation = this.translationBeforePan.clone().subtract(this.mouseBeforePan).add(pos);
   }
 
-  onMouseUp(pos: Vector) {
+  public onMouseUp(pos: Vector): void {
     this.onMouseMove(pos);
     this.isPanning = false;
     this.engine.setCursor('');
   }
 
-  onMouseLeave(pos: Vector) {
+  public onMouseLeave(pos: Vector): void {
     this.onMouseUp(pos);
   }
 
-  onWheel(mouse: Vector, delta: Vector) {
+  public onWheel(mouse: Vector, delta: Vector): void {
     let newScale =
       this.scale *
       (1 -
