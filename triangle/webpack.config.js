@@ -53,13 +53,7 @@ module.exports = {
   },
 
   devServer: {
-    hot: true,
-    inline: true,
-    publicPath: '/',
-    overlay: true,
-    before(_app, server) {
-      server._watch(`src/**/*.html`);
-    },
+    watchFiles: ['src/**/*.html'],
   },
 
   module: {
