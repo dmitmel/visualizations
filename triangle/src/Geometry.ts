@@ -83,9 +83,8 @@ export class Geometry implements GameObject {
 
   private nextPoint(): void {
     let currentInnerEdge = this.innerShape.edges[this.currentEdgeIndex];
-    let currentOuterEdge = this.outerShape.edges[
-      (this.currentEdgeIndex + 1) % this.outerShape.edges.length
-    ];
+    let currentOuterEdge =
+      this.outerShape.edges[(this.currentEdgeIndex + 1) % this.outerShape.edges.length];
     let ray = new Line(
       this.currentPoint,
       this.currentPoint.clone().add(currentInnerEdge.b).subtract(currentInnerEdge.a),
