@@ -12,7 +12,6 @@ settings:
     tryExtensions: ['.ts', '.js', '.json']
 
 rules:
-  func-names: off
   node/no-unsupported-features/es-syntax:
     - error
     - ignores:
